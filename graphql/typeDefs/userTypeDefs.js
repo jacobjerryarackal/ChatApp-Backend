@@ -19,6 +19,7 @@ export const userTypeDefs = gql`
   extend type Query {
     getAllUsers: [User!]!
     getUserById(id: Int!): User
+    searchUsersByName(name: String!): [User!]!
   }
 
   extend type Mutation {

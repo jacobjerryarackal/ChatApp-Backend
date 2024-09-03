@@ -27,11 +27,31 @@ export const userResolvers = {
         throw new ApolloError('Failed to fetch user');
       }
     },
+    searchUsersByName: async (_, { name }) => {
+      try {
+        return await prisma.user.findMany({
+          where: {
+            name: {
+              contains: name,
+              mode: 'insensitive',
+            },
+          },
+        });
+      } catch (error) {
+        console.error('Error searching users by name:', error);
+        throw new ApolloError('Failed to search users');
+      }
+    },
   },
 
   Mutation: {
     createUser: async (_, { name, email, password, profilePic }) => {
       try {
+        const existingUser = await prisma.user.findUnique({ where: { email } });
+        if (existingUser) {
+          throw new ApolloError('User with this email already exists');
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
         return await prisma.user.create({
           data: { name, email, password: hashedPassword, profilePic },
@@ -49,7 +69,6 @@ export const userResolvers = {
           throw new ApolloError('Invalid email or password');
         }
 
-       
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
           throw new ApolloError('Invalid email or password');
