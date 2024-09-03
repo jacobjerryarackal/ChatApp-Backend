@@ -13,7 +13,7 @@
   "dependencies": {
     "@apollo/client": "^3.11.5",
     "@apollo/server": "^4.11.0",
-    "@prisma/client": "^5.19.0",
+    "@prisma/client": "^5.19.1",
     "apollo-server-express": "^3.13.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
@@ -28,6 +28,6 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.4",
-    "prisma": "^5.19.0"
+    "prisma": "^5.19.1"
   }
 }
