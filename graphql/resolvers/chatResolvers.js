@@ -35,7 +35,7 @@ export const chatResolvers = {
             chatName,
             isGroupChat,
             users: { connect: userIds.map((id) => ({ id })) },
-            groupAdmin: { connect: { id: groupAdminId } },
+            groupAdmin: groupAdminId ? { connect: { id: groupAdminId } } : undefined,
           },
         });
       } catch (error) {
@@ -87,6 +87,46 @@ export const chatResolvers = {
       } catch (error) {
         console.error('Error adding message to chat:', error);
         throw new ApolloError('Failed to add message to chat');
+      }
+    },
+
+    addUsersToChat: async (_, { chatId, userIds }) => {
+      try {
+        return await prisma.chat.update({
+          where: { id: chatId },
+          data: {
+            users: { connect: userIds.map((id) => ({ id })) },
+          },
+        });
+      } catch (error) {
+        console.error('Error adding users to chat:', error);
+        throw new ApolloError('Failed to add users to chat');
+      }
+    },
+
+    removeUsersFromChat: async (_, { chatId, userIds }) => {
+      try {
+        return await prisma.chat.update({
+          where: { id: chatId },
+          data: {
+            users: { disconnect: userIds.map((id) => ({ id })) },
+          },
+        });
+      } catch (error) {
+        console.error('Error removing users from chat:', error);
+        throw new ApolloError('Failed to remove users from chat');
+      }
+    },
+
+    renameGroupChat: async (_, { id, newChatName }) => {
+      try {
+        return await prisma.chat.update({
+          where: { id },
+          data: { chatName: newChatName },
+        });
+      } catch (error) {
+        console.error('Error renaming group chat:', error);
+        throw new ApolloError('Failed to rename group chat');
       }
     },
   },
