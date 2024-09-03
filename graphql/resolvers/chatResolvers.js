@@ -90,7 +90,7 @@ export const chatResolvers = {
       }
     },
 
-    addUsersToChat: async (_, { chatId, userIds }) => {
+    addUsersToGroupChat: async (_, { chatId, userIds }) => {
       try {
         return await prisma.chat.update({
           where: { id: chatId },
@@ -99,12 +99,12 @@ export const chatResolvers = {
           },
         });
       } catch (error) {
-        console.error('Error adding users to chat:', error);
-        throw new ApolloError('Failed to add users to chat');
+        console.error('Error adding users to group chat:', error);
+        throw new ApolloError('Failed to add users to group chat');
       }
     },
 
-    removeUsersFromChat: async (_, { chatId, userIds }) => {
+    removeUsersFromGroupChat: async (_, { chatId, userIds }) => {
       try {
         return await prisma.chat.update({
           where: { id: chatId },
@@ -113,8 +113,8 @@ export const chatResolvers = {
           },
         });
       } catch (error) {
-        console.error('Error removing users from chat:', error);
-        throw new ApolloError('Failed to remove users from chat');
+        console.error('Error removing users from group chat:', error);
+        throw new ApolloError('Failed to remove users from group chat');
       }
     },
 
@@ -127,6 +127,23 @@ export const chatResolvers = {
       } catch (error) {
         console.error('Error renaming group chat:', error);
         throw new ApolloError('Failed to rename group chat');
+      }
+    },
+
+    deleteGroupChat: async (_, { id }) => {
+      try {
+        const chat = await prisma.chat.findUnique({ where: { id } });
+        if (!chat) {
+          throw new ApolloError('Chat not found');
+        }
+        if (!chat.isGroupChat) {
+          throw new ApolloError('Cannot delete a non-group chat');
+        }
+        await prisma.chat.delete({ where: { id } });
+        return chat;
+      } catch (error) {
+        console.error('Error deleting group chat:', error);
+        throw new ApolloError('Failed to delete group chat');
       }
     },
   },

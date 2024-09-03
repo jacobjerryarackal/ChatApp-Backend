@@ -21,8 +21,9 @@ export const chatTypeDefs = gql`
     updateChat(id: Int!, chatName: String, isGroupChat: Boolean, userIds: [Int], groupAdminId: Int): Chat!
     deleteChat(id: Int!): Chat!
     addMessageToChat(chatId: Int!, content: String!, senderId: Int!): Message!
-    addUsersToChat(chatId: Int!, userIds: [Int!]!): Chat!
-    removeUsersFromChat(chatId: Int!, userIds: [Int!]!): Chat!
+    addUsersToGroupChat(chatId: Int!, userIds: [Int!]!): Chat!
+    removeUsersFromGroupChat(chatId: Int!, userIds: [Int!]!): Chat!
     renameGroupChat(id: Int!, newChatName: String!): Chat!
+    deleteGroupChat(id: Int!): Chat!  
   }
 `;
