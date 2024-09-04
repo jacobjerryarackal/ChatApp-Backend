@@ -16,34 +16,24 @@ model User {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  chats      Chat[]    @relation("UserChats")
-  messages   Message[] @relation("UserMessages")
-  groupChats Chat[]    @relation("GroupAdminChats")
+  // Relations
+  chats    Chat[]    @relation("UserChats")
+  messages Message[] @relation("UserMessages")
 }
 
 model Chat {
-  id              Int      @id @default(autoincrement())
-  chatName        String
-  isGroupChat     Boolean  @default(false)
-  users           User[]   @relation("UserChats")
-  latestMessage   Message? @relation(fields: [latestMessageId], references: [id])
-  latestMessageId Int?
-  groupAdmin      User?    @relation("GroupAdminChats", fields: [groupAdminId], references: [id])
-  groupAdminId    Int?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  messages Message[] @relation("ChatMessages")
+  id        Int       @id @default(autoincrement())
+  users     User[]    @relation("UserChats") // Users involved in the chat
+  messages  Message[] // Messages in the chat
+  createdAt DateTime  @default(now())
 }
 
 model Message {
   id        Int      @id @default(autoincrement())
-  content   String
-  timestamp DateTime @default(now())
-  senderId  Int
+  chat      Chat     @relation(fields: [chatId], references: [id])
   chatId    Int
-
-  sender User   @relation("UserMessages", fields: [senderId], references: [id])
-  chat   Chat   @relation("ChatMessages", fields: [chatId], references: [id])
-  Chat   Chat[]
+  sender    User     @relation("UserMessages", fields: [senderId], references: [id])
+  senderId  Int
+  text      String
+  timestamp DateTime @default(now())
 }

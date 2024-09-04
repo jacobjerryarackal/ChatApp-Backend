@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 
 export const messageResolvers = {
   Query: {
+    // Fetch all messages with related data
     getAllMessages: async () => {
       try {
         return await prisma.message.findMany({
@@ -15,6 +16,8 @@ export const messageResolvers = {
         throw new ApolloError('Failed to fetch messages');
       }
     },
+
+    // Fetch a single message by ID with related data
     getMessageById: async (_, { id }) => {
       try {
         return await prisma.message.findUnique({
@@ -26,6 +29,8 @@ export const messageResolvers = {
         throw new ApolloError('Failed to fetch message');
       }
     },
+
+    // Fetch messages by chat ID
     getMessagesByChat: async (_, { chatId }) => {
       try {
         return await prisma.message.findMany({
@@ -38,17 +43,19 @@ export const messageResolvers = {
       }
     },
   },
+
   Mutation: {
-    createMessage: async (_, { content, chatId, senderId }) => {
+    // Create a new message
+    createMessage: async (_, { text, chatId, senderId }) => {
       try {
         return await prisma.message.create({
           data: {
-            content,
+            text,
             chat: { connect: { id: chatId } },
             sender: { connect: { id: senderId } },
           },
           include: {
-            sender: true, 
+            sender: true,
             chat: true,
           },
         });
@@ -58,12 +65,13 @@ export const messageResolvers = {
       }
     },
 
-    updateMessage: async (_, { id, content, timestamp }) => {
+    // Update an existing message
+    updateMessage: async (_, { id, text, timestamp }) => {
       try {
         return await prisma.message.update({
           where: { id },
           data: {
-            content,
+            text,
             timestamp: timestamp ? new Date(timestamp) : undefined,
           },
         });
@@ -73,6 +81,7 @@ export const messageResolvers = {
       }
     },
 
+    // Delete a message by ID
     deleteMessage: async (_, { id }) => {
       try {
         const message = await prisma.message.findUnique({ where: { id } });
@@ -87,7 +96,8 @@ export const messageResolvers = {
       }
     },
 
-    sendMessage: async (_, { content, chatId, senderId }) => {
+    // Send a message within a chat
+    sendMessage: async (_, { text, chatId, senderId }) => {
       try {
         const chat = await prisma.chat.findUnique({
           where: { id: chatId },
@@ -103,7 +113,7 @@ export const messageResolvers = {
 
         const message = await prisma.message.create({
           data: {
-            content,
+            text,
             chat: { connect: { id: chatId } },
             sender: { connect: { id: senderId } },
           },

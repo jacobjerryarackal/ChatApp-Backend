@@ -1,9 +1,27 @@
 import { gql } from 'apollo-server-express';
 
 export const messageTypeDefs = gql`
+  type User {
+    id: Int!
+    name: String!
+    email: String!
+    profilePic: String
+    createdAt: String!
+    updatedAt: String!
+    chats: [Chat!]!
+    messages: [Message!]!
+  }
+
+  type Chat {
+    id: Int!
+    users: [User!]!
+    messages: [Message!]!
+    createdAt: String!
+  }
+
   type Message {
     id: Int!
-    content: String!
+    text: String!
     timestamp: String!
     sender: User!
     chat: Chat!
@@ -16,9 +34,9 @@ export const messageTypeDefs = gql`
   }
 
   extend type Mutation {
-    createMessage(content: String!, chatId: Int!, senderId: Int!): Message!
-    updateMessage(id: Int!, content: String, timestamp: String): Message!
+    createMessage(text: String!, chatId: Int!, senderId: Int!): Message!
+    updateMessage(id: Int!, text: String, timestamp: String): Message!
     deleteMessage(id: Int!): Message!
-    sendMessage(content: String!, chatId: Int!, senderId: Int!): Message!
+    sendMessage(text: String!, chatId: Int!, senderId: Int!): Message!
   }
 `;
