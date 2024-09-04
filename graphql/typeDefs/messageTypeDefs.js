@@ -12,6 +12,7 @@ export const messageTypeDefs = gql`
   extend type Query {
     getAllMessages: [Message!]!
     getMessageById(id: Int!): Message
+    getMessagesByChat(chatId: Int!): [Message!]!
   }
 
   extend type Mutation {

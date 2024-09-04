@@ -26,6 +26,17 @@ export const messageResolvers = {
         throw new ApolloError('Failed to fetch message');
       }
     },
+    getMessagesByChat: async (_, { chatId }) => {
+      try {
+        return await prisma.message.findMany({
+          where: { chatId },
+          include: { sender: true, chat: true },
+        });
+      } catch (error) {
+        console.error('Error fetching messages by chat ID:', error);
+        throw new ApolloError('Failed to fetch messages for chat');
+      }
+    },
   },
   Mutation: {
     createMessage: async (_, { content, chatId, senderId }) => {
@@ -35,6 +46,10 @@ export const messageResolvers = {
             content,
             chat: { connect: { id: chatId } },
             sender: { connect: { id: senderId } },
+          },
+          include: {
+            sender: true, 
+            chat: true,
           },
         });
       } catch (error) {
@@ -49,7 +64,7 @@ export const messageResolvers = {
           where: { id },
           data: {
             content,
-            timestamp,
+            timestamp: timestamp ? new Date(timestamp) : undefined,
           },
         });
       } catch (error) {
@@ -74,13 +89,31 @@ export const messageResolvers = {
 
     sendMessage: async (_, { content, chatId, senderId }) => {
       try {
-        return await prisma.message.create({
+        const chat = await prisma.chat.findUnique({
+          where: { id: chatId },
+          include: { users: true },
+        });
+        if (!chat) {
+          throw new ApolloError('Chat not found');
+        }
+        const sender = chat.users.find((user) => user.id === senderId);
+        if (!sender) {
+          throw new ApolloError('Sender is not part of the chat');
+        }
+
+        const message = await prisma.message.create({
           data: {
             content,
             chat: { connect: { id: chatId } },
             sender: { connect: { id: senderId } },
           },
+          include: {
+            sender: true,
+            chat: true,
+          },
         });
+
+        return message;
       } catch (error) {
         console.error('Error sending message:', error);
         throw new ApolloError('Failed to send message');

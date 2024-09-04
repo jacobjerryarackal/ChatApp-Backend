@@ -14,16 +14,50 @@ export const chatTypeDefs = gql`
   extend type Query {
     getAllChats: [Chat!]!
     getChatById(id: Int!): Chat
+    getUserChats(userId: Int!): [Chat!]!
   }
 
   extend type Mutation {
-    createChat(chatName: String!, isGroupChat: Boolean!, userIds: [Int!]!, groupAdminId: Int): Chat!
-    updateChat(id: Int!, chatName: String, isGroupChat: Boolean, userIds: [Int], groupAdminId: Int): Chat!
+    createChat(
+      chatName: String, 
+      isGroupChat: Boolean!, 
+      userIds: [Int!]!, 
+      groupAdminId: Int
+    ): Chat!
+
+    updateChat(
+      id: Int!, 
+      chatName: String, 
+      isGroupChat: Boolean, 
+      userIds: [Int], 
+      groupAdminId: Int
+    ): Chat!
+
     deleteChat(id: Int!): Chat!
-    addMessageToChat(chatId: Int!, content: String!, senderId: Int!): Message!
-    addUsersToGroupChat(chatId: Int!, userIds: [Int!]!): Chat!
-    removeUsersFromGroupChat(chatId: Int!, userIds: [Int!]!): Chat!
-    renameGroupChat(id: Int!, newChatName: String!): Chat!
-    deleteGroupChat(id: Int!): Chat!  
+
+    addMessageToChat(
+      chatId: Int!, 
+      content: String!, 
+      senderId: Int!
+    ): Message!
+
+    addUsersToGroupChat(
+      chatId: Int!, 
+      userIds: [Int!]!
+    ): Chat!
+
+    removeUsersFromGroupChat(
+      chatId: Int!, 
+      userIds: [Int!]!
+    ): Chat!
+
+    renameGroupChat(
+      id: Int!, 
+      newChatName: String!
+    ): Chat!
+
+    deleteGroupChat(id: Int!): Chat!
   }
 `;
+
+export default chatTypeDefs;
