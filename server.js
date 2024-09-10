@@ -25,6 +25,14 @@ const pool = new Pool({
   port: 5432,
 });
 
+pool.connect((err) => {
+  if (err) {
+    console.error('Database connection error:', err);
+  } else {
+    console.log('Connected to the database');
+  }
+});
+
 async function testDbConnection() {
   try {
     const client = await pool.connect();
