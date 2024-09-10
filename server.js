@@ -72,7 +72,7 @@ let activeUsers = [];
 io.on("connection", (socket) => {
   console.log(`New socket connection: ${socket.id}`);
 
-  // Add new user when they connect
+
   socket.on("new-user-add", (newUserId) => {
     if (!activeUsers.some((user) => user.userId === newUserId)) {
       activeUsers.push({
@@ -84,21 +84,21 @@ io.on("connection", (socket) => {
     io.emit("get-users", activeUsers);
   });
 
-  // Remove user on disconnection
+ 
   socket.on("disconnect", () => {
     activeUsers = activeUsers.filter(user => user.socketId !== socket.id);
     console.log("User Disconnected:", activeUsers);
     io.emit("get-users", activeUsers); 
   });
 
-  // Handle sending and receiving messages
+
   socket.on("send-message", (data) => {
     const { chatId, message } = data;
     socket.to(chatId).emit("receive-message", message);
     console.log(`Message sent in chat ${chatId}:`, message);
   });
 
-  // Handle message deletion
+
   socket.on("delete-message", (data) => {
     const { chatId, messageId } = data;
     io.to(chatId).emit("message-deleted", { messageId });
@@ -114,6 +114,8 @@ io.on("connection", (socket) => {
   socket.on("call-user", (data) => {
     try {
       const { offer, userId } = data;
+      console.log('Incoming call from:', userId);
+      console.log('Offer:', offer);
       io.to(userId).emit("receive-call", offer);
       console.log(`Call offer sent to user ${userId}`);
     } catch (error) {

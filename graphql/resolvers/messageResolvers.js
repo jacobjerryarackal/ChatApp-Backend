@@ -34,7 +34,9 @@ export const messageResolvers = {
     getMessagesByChat: async (_, { chatId }) => {
       try {
         return await prisma.message.findMany({
-          where: { chatId },
+          where: { chatId,
+            text: search ? { contains: search, mode: 'insensitive' } : undefined,
+           },
           include: { sender: true, chat: true },
         });
       } catch (error) {
