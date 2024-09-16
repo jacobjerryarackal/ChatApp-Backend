@@ -66,7 +66,7 @@ const io = new Server(httpServer, {
   },
 });
 
-// WebSocket logic for managing active users, messages, and video calls
+
 let activeUsers = [];
 
 io.on("connection", (socket) => {
@@ -99,11 +99,10 @@ io.on("connection", (socket) => {
   });
 
 
-  socket.on("delete-message", (data) => {
-    const { chatId, messageId } = data;
-    io.to(chatId).emit("message-deleted", { messageId });
-    console.log(`Message deleted in chat ${chatId}: ${messageId}`);
-  });
+socket.on('delete-message', ({ chatId, messageId }) => {
+  socket.to(chatId).emit('delete-message', { chatId, messageId });
+});
+
 
   
   socket.on("join-chat", (chatId) => {
